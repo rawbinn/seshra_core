@@ -8,7 +8,6 @@
             "email": "rawbinnn@gmail.com"
         }
     ],
-    "type": "project",
     "license": "MIT",
     "require": {
         "php": "^7.3|^8.0",

@@ -1,0 +1,42 @@
+{
+    "name": "seshra/core",
+    "description": "",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Rawbinn Shrestha",
+            "email": "rawbinnn@gmail.com"
+        }
+    ],
+    "type": "project",
+    "require": {
+        "php": "^7.3|^8.0",
+        "akaunting/setting": "^1.2",
+        "astrotomic/laravel-translatable": "^11.9",
+        "barryvdh/laravel-dompdf": "^0.9.0",
+        "fideloper/proxy": "^4.4",
+        "fruitcake/laravel-cors": "^2.0",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "kalnoy/nestedset": "^5.0",
+        "konekt/concord": "^1.10",
+        "laracasts/flash": "^3.2",
+        "laravel/framework": "^8.12",
+        "laravel/passport": " ^10.0",
+        "laravel/telescope": "^4.0",
+        "laravel/tinker": "^2.5",
+        "prettus/l5-repository": "^2.7",
+        "tormjens/eventy": "^0.7.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Seshra\\Core\\Providers\\CoreServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Seshra\\Core\\": "src/"
+        }
+    }
+}

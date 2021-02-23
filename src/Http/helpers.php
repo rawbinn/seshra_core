@@ -1,8 +1,9 @@
 <?php
     use Seshra\Core\Core;
     use Illuminate\Support\Facades\Auth;
+use Seshra\Core\Helpers\Settings;
 
-    if (! function_exists('core')) {
+if (! function_exists('core')) {
         function core()
         {
             return app()->make(Core::class);
@@ -374,6 +375,15 @@
                 }
             }
             return $user;
+        }
+
+    }
+
+    if (!function_exists('settings')) {
+        
+        function settings($key, $default = null)
+        {
+            return Settings::get($key, $default);
         }
 
     }

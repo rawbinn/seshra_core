@@ -5,6 +5,7 @@ namespace Seshra\Core\Http\Controllers;
 use Setting;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Seshra\Core\Helpers\Settings;
 
 /**
  * Class SettingController
@@ -45,9 +46,7 @@ class SettingController extends Controller
         $request->validate([
             'settings' => 'required'
         ]);
-        foreach ($request->settings as $key => $value) {
-            Setting::set($key, $value);
-        }
+        Settings::update($request->settings);
         flash(translate("Settings updated successfully"))->success();
         return redirect()->route($this->_routes['redirect']);
     }

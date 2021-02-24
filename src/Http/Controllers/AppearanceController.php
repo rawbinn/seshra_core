@@ -66,6 +66,17 @@ class AppearanceController extends Controller
                 unset($settings['widgets'][$key]['labels']);
             }
         }
+        if(array_key_exists('sliders', $settings)) {
+            $sliders = [];
+            foreach($settings['sliders']['labels'] as $key => $value) {
+                $sliders[] = [
+                    'label' => $value,
+                    'link' => $settings['sliders']['links'][$key],
+                    'image' => $settings['sliders']['images'][$key]
+                ];
+            }
+            $settings['sliders'] = $sliders;
+        }
         Settings::update($settings);
         flash(translate("Settings updated successfully"))->success();
         return redirect()->route($this->_routes['redirect']);

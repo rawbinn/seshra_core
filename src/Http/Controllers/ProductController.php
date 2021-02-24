@@ -93,7 +93,7 @@ class ProductController extends Controller
         WarrantyPeriodRepository $warrantyPeriodRepository,
         AttributeOptionRepository $attributeOptionRepository
     ){
-        $this->middleware('admin');
+        $this->middleware('seshra:admin');
         $this->_routes = request('_routes');
         $this->brandRepository = $brandRepository;
         $this->colorRepository = $colorRepository;

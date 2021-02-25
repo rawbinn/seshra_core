@@ -3,6 +3,7 @@
 namespace Seshra\Core\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Seshra\Core\Http\Requests\Attribute\StoreAttributeRequest;
 use Seshra\Core\Repositories\AttributeRepository;
 
 /**
@@ -57,14 +58,8 @@ class AttributeController extends Controller
      * @return \Illuminate\Http\RedirectResponse
      * @author Rawbinn Shrestha ( rawbinnn@gmail.com )
      */
-    public function store(Request $request)
+    public function store(StoreAttributeRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'type' => 'required|in:text,select,swatch',
-            'is_filterable' => 'required|in:0,1'
-        ]);
-
         $this->attributeRepository->create($request->only('name','type','is_filterable'));
 
         flash(translate('Attribute has been added successfully'))->success();

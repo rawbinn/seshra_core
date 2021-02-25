@@ -304,12 +304,12 @@ class ProductRepository extends Repository
             $products = $products->whereIn('brand_id', $brand_ids);
         }
         if($inputs['name'] != '') {
-            $products = $products->where('name', 'like', $inputs['name'].'%');
+            $products = $products->whereTranslationLike('name', $inputs['name'].'%');
         }
         if($inputs['sku'] != '') {
             $products = $products->where('sku', $inputs['sku']);
         }
-        $products = Eventy::filter('PRODUCT_SEARCH_QUERY', $products);
+        $products = filter('PRODUCT_SEARCH_QUERY', $products);
         return $products->paginate($paginate);
     }
 
@@ -326,7 +326,6 @@ class ProductRepository extends Repository
         if($inputs['sku'] != '') {
             $products = $products->where('sku', $inputs['sku']);
         }
-        $products = Eventy::filter('PRODUCT_SEARCH_QUERY', $products);
         return $products->paginate($paginate);
     }
 }

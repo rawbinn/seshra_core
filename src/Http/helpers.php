@@ -1,7 +1,9 @@
 <?php
     use Seshra\Core\Core;
     use Illuminate\Support\Facades\Auth;
-use Seshra\Core\Helpers\Settings;
+    use Seshra\Core\EventManager;
+    use Seshra\Core\Helpers\Settings;
+use Seshra\Core\Models\Currency;
 
 if (! function_exists('core')) {
         function core()
@@ -386,4 +388,39 @@ if (! function_exists('core')) {
             return Settings::get($key, $default);
         }
 
+    }
+
+    if (! function_exists('filter')) {
+        function filter($eventName, $params = null)
+        {
+            app()->singleton(EventManager::class);
+    
+            $viewEventManager = app()->make(EventManager::class);
+    
+            $viewEventManager->handleRenderEvent($eventName, $params);
+    
+            return $viewEventManager->render();
+        }
+    }
+
+    if (! function_exists('currency')) {
+        function currency($amount)
+        {
+            $default_currency_id = setting('system_default_currency');
+            $currency_symbol_format = setting('currency_symbol_format');
+            $currency_decimal_separator = setting('currency_decimal_separator');
+            $no_of_decimals = setting('currency_no_of_decimals');
+            if(
+                $default_currency_id != null && 
+                $currency_symbol_format != null && 
+                $currency_decimal_separator != null && 
+                $no_of_decimals != null
+            ) {
+                $system_default_currency = Currency::findorfail($default_currency_id);
+                $currency_symbol = $system_default_currency->symbol;
+                $amount = ($currency_decimal_separator == 1 ) ? number_format($amount, $no_of_decimals, '.', ',') : number_format($amount, $no_of_decimals, ',', '.');
+                return ($currency_symbol_format == 1) ? sprintf('%s %s', $currency_symbol, $amount) : sprintf('%s %s', $amount, $currency_symbol);
+            }
+            throw new Exception('Please set system currency configurations');
+        }
     }

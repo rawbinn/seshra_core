@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Seshra\Core\Http\Middleware\Locale;
 use Seshra\Core\Facades\Core as CoreFacade;
 use Seshra\Core\Http\Middleware\Theme;
+use Illuminate\View\Compilers\BladeCompiler;
 
 /**
  * Class CoreServiceProvider
@@ -42,6 +43,7 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->registerFacades();
         $this->registerConfig();
+        $this->registerBladeExtensions();
     }
 
     /**
@@ -102,5 +104,15 @@ class CoreServiceProvider extends ServiceProvider
                 // $this->app->register($content['provider']);
             }
         }
+    }
+
+    protected function registerBladeExtensions()
+    {
+        $this->app->afterResolving('blade.compiler', function (BladeCompiler $bladeCompiler) {
+
+            $bladeCompiler->directive('filter', function ($eventName, $params = null) {
+                return "<?php echo filter($eventName, $params) ?>";
+            });
+        });
     }
 }

@@ -27,6 +27,8 @@ class ProductVariation extends Model implements ProductVariationContract
         'variant',
         'sku',
         'retail_price',
-        'stock'
+        'stock',
+        'discount',
+        'image'
     ];
 }

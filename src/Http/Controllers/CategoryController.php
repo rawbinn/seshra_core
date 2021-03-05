@@ -120,7 +120,7 @@ class CategoryController extends Controller
             'type' => 'required|in:0,1',
             'slug' => 'required'
         ]);
-        $this->categoryRepository->update($request->only($locale,'slug','parent_category','type','banner','icon','meta_title','meta_description'), $id);
+        $this->categoryRepository->modify($request->only($locale,'slug','parent_category','type','banner','icon','meta_title','meta_description'), $id);
 
         flash(translate('Category has been updated successfully'))->success();
         return redirect()->back();

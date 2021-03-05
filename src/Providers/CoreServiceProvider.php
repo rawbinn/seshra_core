@@ -100,8 +100,11 @@ class CoreServiceProvider extends ServiceProvider
                 if(file_exists($view_dir)) {
                     $this->loadViewsFrom($view_dir, strtolower($plugin));
                 }
-                // $content = get_file_data($plugin_path . DIRECTORY_SEPARATOR . $plugin . '/plugin.json');
-                // $this->app->register($content['provider']);
+                $content = get_file_data($plugin_path . DIRECTORY_SEPARATOR . $plugin . '/plugin.json');
+                
+                if(is_array($content) && array_key_exists('provider', $content)) {
+                    $this->app->register($content['provider']);
+                }
             }
         }
     }

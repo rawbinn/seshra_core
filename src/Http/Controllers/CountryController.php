@@ -3,8 +3,9 @@
 namespace Seshra\Core\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Country;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use Seshra\Core\Repositories\CountryRepository;
 
 /**
  * Class CountryController
@@ -23,13 +24,33 @@ class CountryController extends Controller
     protected $_routes;
 
     /**
+     * @var CountryRepository
+     */
+    protected $countryRepository;
+
+    /**
+     * CountryController constructor.
+     * @param CountryRepository $countryRepository
+     */
+    public function __construct(
+        CountryRepository $countryRepository
+    ){
+        $this->_routes = request('_routes');
+        $this->countryRepository = $countryRepository;
+    }
+
+    /**
      * @param Request $request
      * @return \Illuminate\Contracts\View\View
      * @author Rawbinn Shrestha ( rawbinnn@gmail.com )
      */
     public function index(Request $request)
     {
-        $countries = Country::paginate(15);
+        $countries = $this->countryRepository->orderBy('name', 'asc');
+        if ($request->has('search')){
+            $countries = $countries->where('name', 'like', $request->search.'%');
+        }
+        $countries = $countries->paginate(15);
         return view($this->_routes['view'], compact('countries'));
     }
 
@@ -51,7 +72,14 @@ class CountryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'code' => 'required|max:2|unique:countries',
+            'name' => 'required|unique:countries'
+        ]);
+
+        $this->countryRepository->create($request->only('code', 'name'));
+        flash(translate('Country has been added successfully'))->success();
+        return redirect()->route($this->_routes['redirect']);
     }
 
     /**
@@ -71,9 +99,16 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request, $id)
     {
-        //
+        $countries = $this->countryRepository->orderBy('name', 'asc');
+        if ($request->has('search')){
+            $countries = $countries->where('name', 'like', $request->search.'%');
+        }
+        $countries = $countries->paginate(15);
+
+        $country  = $this->countryRepository->findOrFail($id);
+        return view($this->_routes['view'], compact('country', 'countries'));
     }
 
     /**
@@ -85,7 +120,16 @@ class CountryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'code' => 'required|max:2|unique:countries,code,'.$id,
+            'name' => 'required|unique:countries,name,'.$id
+        ]);
+        $country = $this->countryRepository->findOrFail($id);
+        
+        $this->countryRepository->update($request->only('code', 'name'), $country->id);
+
+        flash(translate('Country has been updated successfully'))->success();
+        return redirect()->route($this->_routes['redirect']);
     }
 
     /**
@@ -94,22 +138,33 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete($id)
     {
-        //
+        $this->countryRepository->delete($id);
+        flash(translate('Country has been deleted successfully'))->success();
+        return redirect()->route($this->_routes['redirect']);
     }
 
     /**
+     * Ajax Call
      * @param Request $request
      * @return int
      * @author Rawbinn Shrestha ( rawbinnn@gmail.com )
      */
-    public function updateStatus(Request $request){
-        $country = Country::findOrFail($request->id);
-        $country->status = $request->status;
-        if($country->save()){
-            return 1;
+    public function updateStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer',
+            'status' => 'required|in:1,0'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->messages()->all();
+            return response()->json(['status' => false, 'message' => $errors[0], 'data' => []]);
         }
-        return 0;
+        $this->countryRepository->update(['status' => $request->status], $request->id);
+        return response()->json([
+            'status' => true,
+            'message' => 'Country status updated successfully'
+        ]);
     }
 }

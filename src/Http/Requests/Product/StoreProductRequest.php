@@ -33,8 +33,6 @@ class StoreProductRequest extends FormRequest
             'parent_category' => 'required',
             'highlights' => 'required',
             'retail_price' => 'required',
-            'tax' => 'required',
-            'tax_type' => 'required',
             'discount' => 'required',
             'discount_type' => 'required',
             'stock' => 'required',

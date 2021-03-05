@@ -22,9 +22,13 @@ use Seshra\Core\Models\BrandTranslation;
 use Seshra\Core\Models\CategoryTranslation;
 use Seshra\Core\Models\AttributeTranslation;
 use Konekt\Concord\BaseModuleServiceProvider;
+use Seshra\Core\Models\City;
+use Seshra\Core\Models\Country;
+use Seshra\Core\Models\District;
 use Seshra\Core\Models\OrderDetail;
 use Seshra\Core\Models\ProductAttributeOption;
 use Seshra\Core\Models\Review;
+use Seshra\Core\Models\State;
 
 /**
  * Class ModuleServiceProvider
@@ -36,12 +40,16 @@ use Seshra\Core\Models\Review;
 class ModuleServiceProvider extends BaseModuleServiceProvider
 {
     protected $models = [
+        City::class,
         Color::class,
         Brand::class,
         Order::class,
+        State::class,
         Locale::class,
         Review::class,
         Product::class,
+        Country::class,
+        District::class,
         Category::class,
         Currency::class,
         Warranty::class,

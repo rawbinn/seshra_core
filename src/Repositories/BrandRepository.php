@@ -5,6 +5,7 @@ namespace Seshra\Core\Repositories;
 use Seshra\Core\Eloquent\Repository;
 use Illuminate\Container\Container as App;
 use Seshra\Core\Exceptions\GeneralException;
+use Seshra\Core\Traits\SlugTrait;
 
 /**
  * Class BrandRepository
@@ -15,6 +16,8 @@ use Seshra\Core\Exceptions\GeneralException;
  */
 class BrandRepository extends Repository
 {
+    use SlugTrait;
+    
     /**
      * Specify Model class name
      *
@@ -75,14 +78,5 @@ class BrandRepository extends Repository
         catch(\Exception $e) {
             throw new GeneralException($e->getMessage());
         }
-    }
-
-    private function slug($slug)
-    {
-        if($this->model->where('slug', $slug)->count() > 0) {
-            $update_slug = $slug.'-'.mt_rand(1,9);
-            $this->slug($update_slug);
-        }
-        return strtolower($slug);
     }
 }

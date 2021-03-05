@@ -5,6 +5,7 @@ namespace Seshra\Core\Models;
 use Seshra\Media\Models\MediaProxy;
 use Seshra\Core\Eloquent\TranslatableModel;
 use Seshra\Core\Contracts\Product as ProductContract;
+use Seshra\Core\Models\Traits\ActiveScope;
 use Seshra\Core\Models\Traits\ProductAttribute;
 
 /**
@@ -17,7 +18,7 @@ use Seshra\Core\Models\Traits\ProductAttribute;
 class Product extends TranslatableModel implements ProductContract
 {
 
-    use ProductAttribute;
+    use ProductAttribute, ActiveScope;
 
     public $translatedAttributes = [
         'name',

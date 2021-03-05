@@ -140,7 +140,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        $this->productRepository->create($request->only('name','parent_category','video_url','brand','highlights','tags','highlights','long_description','retail_price','tax','tax_type','discount','discount_type','stock','images', 'thumbnails','custom_inputs', 'custom_input_type', 'attributes','options','variants','warranty_type','warranty_period','package_weight','package_length','package_width','package_height','meta_title','meta_description','meta_image','product_tags'));
+        $this->productRepository->create($request->only('name','parent_category','video_url','brand','highlights','tags','highlights','long_description','retail_price','discount','discount_type','stock','images', 'thumbnails','custom_inputs', 'custom_input_type', 'attributes','options','variants','warranty_type','warranty_period','package_weight','package_length','package_width','package_height','meta_title','meta_description','meta_image','product_tags'));
 
         flash(translate('New product has been added successfully.'))->success();
         return redirect()->route($this->_routes['redirect']);
@@ -204,7 +204,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         $locale = $request->lang ?? app()->getLocale();
-        $this->productRepository->modify($request->only($locale,'parent_category','video_url','brand','highlights','tags','highlights','long_description','retail_price','tax','tax_type','discount','discount_type','stock','images', 'thumbnails','custom_inputs','custom_input_type', 'attributes','options','variants','warranty_type','warranty_period','package_weight','package_length','package_width','package_height','meta_title','meta_description','meta_image','product_tags'), $id);
+        $this->productRepository->modify($request->only($locale,'parent_category','video_url','brand','highlights','tags','highlights','long_description','retail_price','discount','discount_type','stock','images', 'thumbnails','custom_inputs','custom_input_type', 'attributes','options','variants','warranty_type','warranty_period','package_weight','package_length','package_width','package_height','meta_title','meta_description','meta_image','product_tags'), $id);
 
         flash(translate('Product has been updtaed successfully.'))->success();
         return redirect()->route($this->_routes['redirect']);
@@ -279,7 +279,7 @@ class ProductController extends Controller
                 $data = [];
                 if(isset($request->options[$attribute_id]) && json_decode($request->options[$attribute_id])) {
                     foreach (json_decode($request->options[$attribute_id]) as $option) {
-                        $att_option = $this->optionRepository->whereTranslation('name', $option->value)->first();
+                        $att_option = $this->attributeOptionRepository->whereTranslation('name', $option->value)->first();
                         array_push($data, $att_option->id);
                     }
                     array_push($options, $data);
@@ -327,7 +327,7 @@ class ProductController extends Controller
                 $data = [];
                 if(isset($request->options[$attribute_id]) && json_decode($request->options[$attribute_id])) {
                     foreach (json_decode($request->options[$attribute_id]) as $option) {
-                        $att_option = $this->optionRepository->whereTranslation('name', $option->value)->first();
+                        $att_option = $this->attributeOptionRepository->whereTranslation('name', $option->value)->first();
                         array_push($data, $att_option->id);
                     }
                     array_push($options, $data);

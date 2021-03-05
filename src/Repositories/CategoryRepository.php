@@ -56,7 +56,7 @@ class CategoryRepository extends Repository
         return $category;
     }
 
-    public function update(array $data, $id)
+    public function modify(array $data, $id)
     {
         try {
             $category = $this->find($id);

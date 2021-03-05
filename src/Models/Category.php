@@ -34,6 +34,7 @@ class Category extends TranslatableModel implements CategoryContract
         'top',
         'digital',
         'slug',
+        'commission',
         'meta_title',
         'meta_description',
         'created_at',

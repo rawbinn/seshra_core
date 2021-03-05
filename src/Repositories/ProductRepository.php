@@ -6,9 +6,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Seshra\Core\Eloquent\Repository;
 use Illuminate\Container\Container as App;
-use Illuminate\Support\Facades\Auth;
 use Seshra\Core\Exceptions\GeneralException;
-use TorMorten\Eventy\Facades\Events as Eventy;
+use Seshra\Core\Traits\SlugTrait;
 
 /**
  * Class ProductRepository
@@ -19,6 +18,8 @@ use TorMorten\Eventy\Facades\Events as Eventy;
  */
 class ProductRepository extends Repository
 {
+    use SlugTrait;
+    
     protected $categoryRepository;
     
     protected $brandRepository;
@@ -67,8 +68,6 @@ class ProductRepository extends Repository
                 'video_url' => $attributes['video_url'],
                 'brand_id' => $attributes['brand'],
                 'retail_price' => $attributes['retail_price'],
-                'tax' => $attributes['tax'],
-                'tax_type' => $attributes['tax_type'],
                 'discount' => $attributes['discount'],
                 'discount_type' => $attributes['discount_type'],
                 'stock' => $attributes['stock'],
@@ -120,7 +119,7 @@ class ProductRepository extends Repository
             if(isset($attributes['variants'])) {
                 foreach($attributes['variants'] as $key => $value) {
                     $name = $product->name. ' '.$value['sku'];
-                    $product->variations()->create(['variant' => $key, 'name' => $name, 'sku' => $value['sku'], 'retail_price' => $value['retail_price'], 'stock' => $value['stock']]);
+                    $product->variations()->create(['variant' => $key, 'name' => $name, 'sku' => $value['sku'], 'retail_price' => $value['retail_price'], 'discount' => $value['discount'], 'stock' => $value['stock'], 'image' => $value['image']]);
                 }
             }
         }catch(\Exception $e) {
@@ -258,15 +257,6 @@ class ProductRepository extends Repository
         catch(\Exception $e) {
             throw new GeneralException($e->getMessage());
         }
-    }
-
-    private function slug($slug)
-    {
-        if($this->model->where('slug', $slug)->count() > 0) {
-            $update_slug = $slug.'-'.mt_rand(1,9);
-            return $this->slug($update_slug);
-        }
-        return strtolower($slug);
     }
 
     private function sku($sku, $type = null)

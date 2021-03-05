@@ -1,9 +1,10 @@
 <?php
+    use Illuminate\Support\Facades\File;
     use Seshra\Core\Core;
     use Illuminate\Support\Facades\Auth;
     use Seshra\Core\EventManager;
     use Seshra\Core\Helpers\Settings;
-use Seshra\Core\Models\Currency;
+    use Seshra\Core\Models\Currency;
 
 if (! function_exists('core')) {
         function core()
@@ -337,7 +338,8 @@ if (! function_exists('core')) {
       
         function get_file_data($file, $convert_to_array = true)
         {
-            $file = File::get($file);
+            
+            $file = File::exists($file) ? File::get($file) : '';
             if (!empty($file)) {
                 if ($convert_to_array) {
                     return json_decode($file, true);
@@ -395,11 +397,11 @@ if (! function_exists('core')) {
         {
             app()->singleton(EventManager::class);
     
-            $viewEventManager = app()->make(EventManager::class);
+            $eventManager = app()->make(EventManager::class);
     
-            $viewEventManager->handleRenderEvent($eventName, $params);
+            $eventManager->handleRenderEvent($eventName, $params);
     
-            return $viewEventManager->render();
+            return $eventManager->render();
         }
     }
 

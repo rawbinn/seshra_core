@@ -6,7 +6,7 @@
     use Seshra\Core\Helpers\Settings;
     use Seshra\Core\Models\Currency;
 
-if (! function_exists('core')) {
+    if (! function_exists('core')) {
         function core()
         {
             return app()->make(Core::class);
@@ -41,20 +41,6 @@ if (! function_exists('core')) {
         function locales()
         {
             return core()->getAllLocales();
-        }
-    }
-
-    if (! function_exists('static_asset')) {
-        /**
-         * Generate an asset path for the application.
-         *
-         * @param  string  $path
-         * @param  bool|null  $secure
-         * @return string
-         */
-        function static_asset($path, $secure = null)
-        {
-            return app('url')->asset($path, $secure);
         }
     }
     
@@ -99,28 +85,6 @@ if (! function_exists('core')) {
         function isHttps()
         {
             return !empty($_SERVER['HTTPS']) && ('on' == $_SERVER['HTTPS']);
-        }
-    }
-    
-    if (!function_exists('getBaseURL')) {
-        function getBaseURL()
-        {
-            $root = (isHttps() ? "https://" : "http://").$_SERVER['HTTP_HOST'];
-            $root .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
-            return $root;
-        }
-    }
-    
-    
-    if (!function_exists('getFileBaseURL')) {
-        function getFileBaseURL()
-        {
-            if(env('FILESYSTEM_DRIVER') == 's3'){
-                return env('AWS_URL').'/';
-            }
-            else {
-                return getBaseURL().'public/';
-            }
         }
     }
 
@@ -355,14 +319,10 @@ if (! function_exists('core')) {
         
         function current_guard()
         {
-            $current_guard = null;
-            $guards = config('auth.guards');
-            foreach($guards as $guard => $values) {
-                if(Auth::guard($guard)->check()) {
-                    $current_guard = $guard;
-                }
-            }
-            return $current_guard;
+            $guards = array_keys(config('auth.guards'));
+            return collect($guards)->first(function($guard){
+                return auth()->guard($guard)->check();
+            });
         }
 
     }
@@ -388,6 +348,39 @@ if (! function_exists('core')) {
         function settings($key, $default = null)
         {
             return Settings::get($key, $default);
+        }
+
+    }
+
+    if (!function_exists('seshra')) {
+        
+        function seshra($key, $params = null)
+        {
+            switch($key) {
+                case 'favicon_url':
+                    return (setting('system_favicon') != '') ? media(setting('system_favicon')) : asset('assets/img/favicon.jpeg');
+                    break;
+                case 'logo_url':
+                    $key = 'system_logo_'.$params;
+                    return (setting($key) != '') ? media(setting($key)) : asset('assets/img/logo.png');
+                    break;
+                case 'system_name':
+                    return (setting('site_name') != '') ? setting('site_name') : config('app.name');
+                    break;
+                case 'base_url':
+                    $root = (isHttps() ? "https://" : "http://").$_SERVER['HTTP_HOST'];
+                    $root .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+                    return $root;
+                    break;
+                case 'file_base_url':
+                    if(env('FILESYSTEM_DRIVER') == 's3'){
+                        return env('AWS_URL').'/';
+                    }
+                    else {
+                        return seshra('bas_url').'public/';
+                    }
+                    break;
+            }
         }
 
     }
